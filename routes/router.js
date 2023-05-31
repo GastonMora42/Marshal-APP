@@ -8,20 +8,19 @@ const authController = require("../controllers/authController");
 
 //router para las vistas
 router.get("/", (req, res) => {
-    db()
   res.render("index");
 });
 
 router.get("/login", (req, res) => {
-  res.render("login");
+  res.render("login", {alert: false})
 });
 
 router.get("/register", (req, res) => {
   res.render("register");
 });
 
-router.get("/hub", (req, res) => {
-  res.render("hub");
+router.get("/hub",authController.isAuthenticated, (req, res) => {
+  res.render("hub", {email:req.email});
 });
 
 
@@ -29,4 +28,6 @@ router.get("/hub", (req, res) => {
 //Router para los metodos del controller
 router.post("/register", authController.register)
 router.post("/login", authController.login)
+router.post("/hub", authController.login)
+router.get("/logout", authController.logout)
 module.exports = router;

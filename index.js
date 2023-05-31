@@ -7,8 +7,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 //Importamos Base de Datos
-const db = require ("./db/db");
-
+const db = require("./db/db");
 
 app.use(cors());
 app.use(cookieParser());
@@ -19,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //Render de vistas
 app.get("/", (req, res) => {
-  res.render("index")
+  res.render("index");
 });
 
 //Seteamos motro de plantillas
@@ -28,21 +27,19 @@ app.set("view engine", "ejs");
 //Seteamos carpeta public
 app.use(express.static(__dirname + "/public"));
 
-
 //Seteamos variables de entorno
 dotenv.config({ path: "./env.env" });
 
 //Usamos cookies
-//app.use(cookieParser());
+app.use(cookieParser());
 
 //Llamar al router
 app.use("/", require("./routes/router"));
 
-
 app.post("/create", (req, res) => {
   const usuario = req.body.usuario;
   const marca = req.body.marca;
-  const alcanze = req.body.alcanze;  
+  const alcanze = req.body.alcanze;
   const rol = req.body.rol;
   const años = req.body.años;
   const objetivos = req.body.objetivos;
@@ -68,6 +65,13 @@ app.get("/usuarios", (req, res) => {
       res.send(result);
     }
   });
+});
+
+//Para eliminar el cache del navegador y que no se pueda volver con el boton back despues de hacer logout
+app.use(function (req, res, next) {
+  if (!req.email)
+    res.header("Cache-Control", "private, no-cache, no-store, must-revalidate");
+  next();
 });
 
 app.listen(3000, () => {

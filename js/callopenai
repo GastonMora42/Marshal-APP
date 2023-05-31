@@ -1,0 +1,41 @@
+
+  const apiKey = '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'; // Reemplaza con tu propia clave de API
+  const responseUrl = await openai.retrieveModel("text-davinci-003");
+
+  const generarTexto = async (prompt, condicion) => {
+    const requestBody = {
+      prompt: prompt,
+      max_tokens: 100,
+      temperature: 0.7,
+      top_p: 1.0,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+      logit_bias: {
+        'especifica_condicion': condicion
+      },
+      n: 3 // Cambia el valor de 'n' según la cantidad de opciones que deseas mostrar
+    };
+
+    const response = await fetch(responseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    const data = await response.json();
+    const generatedTexts = data.choices[0].message(choice => choice.text.trim());
+
+    const textoGeneradoInput = document.getElementById('texto-generado');
+    textoGeneradoInput.value = generatedTexts.join('\n\n');
+  };
+
+  const boton = document.getElementById('mi-boton');
+  boton.addEventListener('click', () => {
+    const promptInput = document.getElementById('prompt-input');
+    const prompt = promptInput.value;
+    const condicion = 'Tu condición aquí';
+    generarTexto(prompt, condicion);
+  });
